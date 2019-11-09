@@ -1,4 +1,4 @@
-FROM php:7.3.8-fpm-alpine3.10 as runtime
+FROM php:7.3.11-fpm-alpine3.10 as runtime
 
 WORKDIR /var/www
 
