@@ -1,0 +1,16 @@
+#!/bin/bash
+set -exuo pipefail
+
+echo "=== Build hook running"
+export DOCKER_REPO=${DOCKER_REPO:-ilyes512/php73}
+export DOCKER_TAG=${DOCKER_TAG:-latest}
+export IMAGE_NAME=${IMAGE_NAME:-$DOCKER_REPO:$DOCKER_TAG}
+
+targets=(builder runtime)
+for target in "${targets[@]}"; do
+    echo "=== Building $DOCKER_REPO:alpine-$target-$DOCKER_TAG"
+    docker build \
+        --target "$target" \
+        --tag "$DOCKER_REPO:$target-alpine" \
+        .
+done
