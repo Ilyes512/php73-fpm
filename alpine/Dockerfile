@@ -3,11 +3,13 @@ FROM php:7.3.11-fpm-alpine3.10 as runtime
 WORKDIR /var/www
 
     # install deps
+    # hadolint ignore=SC2086
 RUN apk add --no-cache --upgrade \
         ca-certificates \
         openssl \
         curl \
         git \
+        msmtp \
         # dependency of the php intl-extension
         icu \
         # dependency of the php gd-extension
@@ -16,11 +18,10 @@ RUN apk add --no-cache --upgrade \
         libpng \
         # dependency of php zip-extension
         libzip \
-        ssmtp \
-    # needed for gd extension configuration
+    # install needed php extension configuration/installing packages
     && apk add --no-cache --upgrade --virtual .build \
         $PHPIZE_DEPS \
-        # depdency of the php intl-extension
+        # dependency of the php intl-extension
         icu-dev \
         # dependencies of php gd-extension
         freetype-dev \
@@ -34,7 +35,7 @@ RUN apk add --no-cache --upgrade \
         --with-png-dir=/usr/include/ \
         --with-freetype-dir=/usr/include/ \
     # install php extensions
-    && docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) \
+    && docker-php-ext-install -j "$(getconf _NPROCESSORS_ONLN)" \
         pdo_mysql \
         intl \
         opcache \
@@ -42,21 +43,24 @@ RUN apk add --no-cache --upgrade \
         gd \
         bcmath \
         zip \
+    && apk del .build \
     # remove all (non-hidden) files and dirs in /var/www/
     && rm -rf /var/www/* \
-    && apk del .build \
     && rm -rf /tmp/*
 
 FROM runtime as builder
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
-ENV COMPOSER_VERSION 1.9.0
-ENV COMPOSER_SHA256 c9dff69d092bdec14dee64df6677e7430163509798895fbd54891c166c5c0875
+ENV COMPOSER_VERSION 1.9.1
+ENV COMPOSER_SHA256 1f210b9037fcf82670d75892dfc44400f13fe9ada7af9e787f93e50e3b764111
 ENV XDEBUG_VERSION 2.8.0
 ENV PATH /root/.composer/vendor/bin:$PATH
 
-    # install composer
-RUN curl -fsSL https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version=$COMPOSER_VERSION \
+SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
+
+    # install composer and xdebug
+    # hadolint ignore=SC2086
+RUN curl -fsSL https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version="$COMPOSER_VERSION" \
     && echo "$COMPOSER_SHA256 */usr/local/bin/composer" | sha256sum -c - \
     && composer --ansi --version --no-interaction \
     # install prestissimo composer plugin (paralell downloading of packages - remove this when Composer 2 is released!)
@@ -64,7 +68,7 @@ RUN curl -fsSL https://getcomposer.org/installer | php -- --install-dir=/usr/loc
     # Needed for xdebug extension configuration (is removed later on, see --virtual)
     && apk add --no-cache --upgrade --virtual .build \
         $PHPIZE_DEPS \
-    && pecl install xdebug-$XDEBUG_VERSION \
+    && pecl install "xdebug-$XDEBUG_VERSION" \
     && docker-php-ext-enable xdebug \
     && apk del .build \
     && rm -rf /tmp/*
