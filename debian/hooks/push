@@ -7,16 +7,17 @@ export DOCKER_TAG=${DOCKER_TAG:-latest}
 export IMAGE_NAME=${IMAGE_NAME:-$DOCKER_REPO:$DOCKER_TAG}
 export SOURCE_BRANCH=${SOURCE_BRANCH:-master}
 
-runtime="$DOCKER_REPO:runtime-alpine"
-builder="$DOCKER_REPO:builder-alpine"
+distro="debian"
+runtime="$DOCKER_REPO:runtime-$distro"
+builder="$DOCKER_REPO:builder-$distro"
 
 tag=`git describe --abbrev=0 --exact-match 2>/dev/null || true`
 if [[ $tag ]]; then
-    docker tag $runtime "$DOCKER_REPO:$tag-runtime-alpine"
-    docker tag $builder "$DOCKER_REPO:$tag-builder-alpine"
+    docker tag $runtime "$DOCKER_REPO:$tag-runtime-$distro"
+    docker tag $builder "$DOCKER_REPO:$tag-builder-$distro"
 
-    docker push "$DOCKER_REPO:$tag-runtime-alpine"
-    docker push "$DOCKER_REPO:$tag-builder-alpine"
+    docker push "$DOCKER_REPO:$tag-runtime-$distro"
+    docker push "$DOCKER_REPO:$tag-builder-$distro"
 
     # SemVer Regex. (Source: https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string)
     regex='^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$'
@@ -31,20 +32,20 @@ if [[ $tag ]]; then
         # prerelease=`echo $tag | docker run --rm --interactive ilyes512/pcregrep -o4 $regex`
         # buildmetadata=`echo $tag | docker run --rm --interactive ilyes512/pcregrep -o5 $regex`
 
-        docker tag $runtime "$DOCKER_REPO:latest-runtime-alpine"
-        docker tag $builder "$DOCKER_REPO:latest-builder-alpine"
-        docker tag $runtime "$DOCKER_REPO:$major.$minor-runtime-alpine"
-        docker tag $builder "$DOCKER_REPO:$major.$minor-builder-alpine"
+        docker tag $runtime "$DOCKER_REPO:latest-runtime-$distro"
+        docker tag $builder "$DOCKER_REPO:latest-builder-$distro"
+        docker tag $runtime "$DOCKER_REPO:$major.$minor-runtime-$distro"
+        docker tag $builder "$DOCKER_REPO:$major.$minor-builder-$distro"
 
-        docker push "$DOCKER_REPO:latest-runtime-alpine"
-        docker push "$DOCKER_REPO:latest-builder-alpine"
-        docker push "$DOCKER_REPO:$major.$minor-runtime-alpine"
-        docker push "$DOCKER_REPO:$major.$minor-builder-alpine"
+        docker push "$DOCKER_REPO:latest-runtime-$distro"
+        docker push "$DOCKER_REPO:latest-builder-$distro"
+        docker push "$DOCKER_REPO:$major.$minor-runtime-$distro"
+        docker push "$DOCKER_REPO:$major.$minor-builder-$distro"
     fi
 elif [[ $SOURCE_BRANCH = "master" ]]; then
-    docker tag $runtime "$DOCKER_REPO:latest-runtime-alpine"
-    docker tag $builder "$DOCKER_REPO:latest-builder-alpine"
+    docker tag $runtime "$DOCKER_REPO:latest-runtime-$distro"
+    docker tag $builder "$DOCKER_REPO:latest-builder-$distro"
 
-    docker push "$DOCKER_REPO:latest-runtime-alpine"
-    docker push "$DOCKER_REPO:latest-builder-alpine"
+    docker push "$DOCKER_REPO:latest-runtime-$distro"
+    docker push "$DOCKER_REPO:latest-builder-$distro"
 fi
