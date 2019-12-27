@@ -1,4 +1,4 @@
-FROM php:7.3.11-fpm-buster as runtime
+FROM php:7.3.13-fpm-buster as runtime
 
 WORKDIR /var/www
 
@@ -62,7 +62,7 @@ FROM runtime as builder
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_VERSION 1.9.1
 ENV COMPOSER_SHA256 1f210b9037fcf82670d75892dfc44400f13fe9ada7af9e787f93e50e3b764111
-ENV XDEBUG_VERSION 2.8.0
+ENV XDEBUG_VERSION 2.9.0
 ENV PATH /root/.composer/vendor/bin:$PATH
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
