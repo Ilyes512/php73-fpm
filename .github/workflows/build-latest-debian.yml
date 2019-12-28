@@ -1,0 +1,33 @@
+name: Build latest based on Debian
+
+on:
+  push:
+    branches: [master]
+    paths: ['debian/**']
+
+env:
+  OS: debian
+  RUNTIME_TAG: $GITHUB_REPOSITORY:$OS-latest-builder
+  BUILDER_TAG: $GITHUB_REPOSITORY:$OS-latest-builder
+
+jobs:
+  build_latest_debian:
+    name: Build latest Debian
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+      - name: Login to docker registry
+        uses: azure/docker-login@1b3a1df35785f72a6fbf87f3e9d0390f0c597afd
+        with:
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+      - name: Build containers
+        run: |
+          docker build --tag $BUILDER_TAG --target builder ./$OS
+          docker build --tag $RUNTIME_TAG --target runtime ./$OS
+      - name: Push containers
+        run: |
+          docker push $BUILDER_TAG
+          docker push $RUNTIME_TAG

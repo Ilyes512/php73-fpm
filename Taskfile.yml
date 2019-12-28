@@ -1,5 +1,7 @@
 version: "2"
 
+silent: false
+
 ########################################################################################################################
 #
 # TOC
@@ -22,7 +24,7 @@ tasks:
     cmds:
       - task: d:build
         vars:
-          TYPE: debian
+          OS: debian
           TARGET: '{{.TARGET | default "builder"}}'
           TAG_VERSION: '{{.TAG_VERSION | default "latest"}}'
 
@@ -31,19 +33,18 @@ tasks:
     cmds:
       - task: d:build
         vars:
-          TYPE: alpine
+          OS: alpine
           TARGET: '{{.TARGET | default "builder"}}'
           TAG_VERSION: '{{.TAG_VERSION | default "latest"}}'
 
   d:build:
-    silent: true
     deps:
       - task: d:lint
         vars:
-          TYPE: '{{.TYPE}}'
+          OS: '{{.OS}}'
     preconditions:
-      - sh: test '{{.TYPE}}' != '<no value>'
-        msg: TYPE needs to contain the Docker OS TYPE [alpine, debian]
+      - sh: test '{{.OS}}' != '<no value>'
+        msg: OS needs to contain the Docker OS OS [alpine, debian]
       - sh: test '{{.TARGET}}' != '<no value>'
         msg: TARGET needs to contain the Docker TARGET [runtime, builder]
       - sh: test '{{.TAG_VERSION}}' != '<no value>'
@@ -53,15 +54,14 @@ tasks:
     cmds:
       - docker build
         --target {{.TARGET}}
-        --tag {{.TAG_REPOSITORY}}/{{.TAG_NAME}}:{{.TAG_VERSION}}-{{.TARGET}}-{{.TYPE}}
-        ./{{.TYPE}}
+        --tag {{.TAG_REPOSITORY}}/{{.TAG_NAME}}:{{.OS}}-{{.TAG_VERSION}}-{{.TARGET}}
+        ./{{.OS}}
 
   d:lint:
     desc: Apply a Dockerfile linter (https://github.com/hadolint/hadolint)
-    silent: true
     preconditions:
-      - sh: test '{{.TYPE}}' != '<no value>'
-        msg: TYPE needs to contain the Docker OS TYPE [alpine, debian]
+      - sh: test '{{.OS}}' != '<no value>'
+        msg: OS needs to contain the Docker OS OS [alpine, debian]
     cmds:
       - docker run
         --interactive
@@ -71,5 +71,4 @@ tasks:
         --ignore DL3018
         --ignore DL3008
         -
-        < ./{{.TYPE}}/Dockerfile
-
+        < ./{{.OS}}/Dockerfile
