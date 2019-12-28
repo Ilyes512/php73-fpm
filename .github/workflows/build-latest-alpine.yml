@@ -3,7 +3,7 @@ name: Build latest based on Alpine
 on:
   push:
     branches: [master]
-    paths: ['alpine/**']
+    # paths: ['alpine/**']
 
 env:
   OS: alpine

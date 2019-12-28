@@ -3,7 +3,7 @@ name: Build latest based on Debian
 on:
   push:
     branches: [master]
-    paths: ['debian/**']
+    # paths: ['debian/**']
 
 env:
   OS: debian
