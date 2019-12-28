@@ -7,8 +7,7 @@ on:
 
 env:
   OS: alpine
-  RUNTIME_TAG: $GITHUB_REPOSITORY:$OS-latest-builder
-  BUILDER_TAG: $GITHUB_REPOSITORY:$OS-latest-builder
+  DOCKER_REPO: ilyes512/php73-php
 
 jobs:
   build_latest_alpine:
@@ -25,9 +24,9 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
       - name: Build containers
         run: |
-          docker build --tag $BUILDER_TAG --target builder ./$OS
-          docker build --tag $RUNTIME_TAG --target runtime ./$OS
+          docker build --tag $DOCKER_REPO:$OS-latest-builder --target builder ./$OS
+          docker build --tag $DOCKER_REPO:$OS-latest-runtime --target runtime ./$OS
       - name: Push containers
         run: |
-          docker push $BUILDER_TAG
-          docker push $RUNTIME_TAG
+          docker push $DOCKER_REPO:$OS-latest-builder
+          docker push $DOCKER_REPO:$OS-latest-runtime
