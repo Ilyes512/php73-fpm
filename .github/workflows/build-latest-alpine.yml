@@ -19,7 +19,7 @@ jobs:
         with:
           fetch-depth: 1
       - name: Login to docker registry
-        uses: azure/docker-login@1b3a1df35785f72a6fbf87f3e9d0390f0c597afd
+        uses: azure/docker-login@8d6f807dfe933ef49956873df1022dd03a761071
         with:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
