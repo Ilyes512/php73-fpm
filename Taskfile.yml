@@ -44,7 +44,7 @@ tasks:
           OS: '{{.OS}}'
     preconditions:
       - sh: test '{{.OS}}' != '<no value>'
-        msg: OS needs to contain the Docker OS OS [alpine, debian]
+        msg: OS needs to contain the Docker OS [alpine, debian]
       - sh: test '{{.TARGET}}' != '<no value>'
         msg: TARGET needs to contain the Docker TARGET [runtime, builder]
       - sh: test '{{.TAG_VERSION}}' != '<no value>'
@@ -61,7 +61,7 @@ tasks:
     desc: Apply a Dockerfile linter (https://github.com/hadolint/hadolint)
     preconditions:
       - sh: test '{{.OS}}' != '<no value>'
-        msg: OS needs to contain the Docker OS OS [alpine, debian]
+        msg: OS needs to contain the Docker OS [alpine, debian]
     cmds:
       - docker run
         --interactive
