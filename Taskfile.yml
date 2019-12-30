@@ -49,8 +49,6 @@ tasks:
         msg: TARGET needs to contain the Docker TARGET [runtime, builder]
       - sh: test '{{.TAG_VERSION}}' != '<no value>'
         msg: TAG_VERSION needs to contain the tag that will be assigned to the Docker build
-    env:
-      DOCKER_BUILDKIT: 1
     cmds:
       - docker build
         --target {{.TARGET}}
