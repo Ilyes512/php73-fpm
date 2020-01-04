@@ -1,4 +1,4 @@
-name: Build latest based on Debian
+name: Build latest Debian images
 
 on:
   push:

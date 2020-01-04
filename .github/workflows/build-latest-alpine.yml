@@ -1,4 +1,4 @@
-name: Build latest based on Alpine
+name: Build latest Alpine images
 
 on:
   push:
