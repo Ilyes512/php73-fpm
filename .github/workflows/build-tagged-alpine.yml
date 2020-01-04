@@ -1,0 +1,35 @@
+name: Build tagged Alpine images
+
+on:
+  push:
+    tags: ['alpine-*']
+
+env:
+  OS: alpine
+  DOCKER_REPO: ilyes512/php73-php
+
+jobs:
+  build_latest_alpine:
+    name: Build tagged Alpine
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+      - name: Login to docker registry
+        uses: azure/docker-login@8d6f807dfe933ef49956873df1022dd03a761071
+        with:
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+      - name: Build containers
+        run: |
+          echo "\$GITHUB_REF: $GITHUB_REF"
+          TAG=`echo $GITHUB_REF | cut -c11-`
+          echo "\$TAG: $TAG"
+          docker build --tag $DOCKER_REPO:$TAG-builder --target builder ./$OS
+          docker build --tag $DOCKER_REPO:$TAG-runtime --target runtime ./$OS
+      - name: Push containers
+        run: |
+          TAG=`echo $GITHUB_REF | cut -c11-`
+          docker push $DOCKER_REPO:$TAG-builder
+          docker push $DOCKER_REPO:$TAG-runtime
