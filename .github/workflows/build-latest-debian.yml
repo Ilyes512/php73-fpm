@@ -7,7 +7,7 @@ on:
 
 env:
   OS: debian
-  DOCKER_REPO: ilyes512/php73-php
+  DOCKER_REPO: ilyes512/php73-fpm
 
 jobs:
   build_latest_debian:
