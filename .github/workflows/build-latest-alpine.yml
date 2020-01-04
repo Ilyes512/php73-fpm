@@ -26,7 +26,13 @@ jobs:
         run: |
           docker build --tag $DOCKER_REPO:$OS-latest-builder --target builder ./$OS
           docker build --tag $DOCKER_REPO:$OS-latest-runtime --target runtime ./$OS
+      - name: Tag latest
+        run: |
+          docker tag $DOCKER_REPO:$OS-latest-builder $DOCKER_REPO:latest-builder
+          docker tag $DOCKER_REPO:$OS-latest-runtime $DOCKER_REPO:latest-runtime
       - name: Push containers
         run: |
           docker push $DOCKER_REPO:$OS-latest-builder
           docker push $DOCKER_REPO:$OS-latest-runtime
+          docker push $DOCKER_REPO:$latest-builder
+          docker push $DOCKER_REPO:latest-runtime
