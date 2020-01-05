@@ -3,7 +3,7 @@ name: Build latest Debian images
 on:
   push:
     branches: [master]
-    paths: ['debian/**']
+    # paths: ['debian/**']
 
 env:
   OS: debian
@@ -22,8 +22,18 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
       - name: Build containers
         run: |
-          docker build --tag $DOCKER_REPO:$OS-latest-builder --target builder ./$OS
-          docker build --tag $DOCKER_REPO:$OS-latest-runtime --target runtime ./$OS
+          docker build \
+            --build-arg VCS_REF=`git rev-parse HEAD` \
+            --build-arg VERSION=$OS-latest-builder \
+            --tag $DOCKER_REPO:$OS-latest-builder \
+            --target builder \
+            ./$OS
+          docker build \
+            --build-arg VCS_REF=`git rev-parse HEAD` \
+            --build-arg VERSION=$OS-latest-runtime \
+            --tag $DOCKER_REPO:$OS-latest-runtime \
+            --target runtime \
+            ./$OS
       - name: Push containers
         run: |
           docker push $DOCKER_REPO:$OS-latest-builder

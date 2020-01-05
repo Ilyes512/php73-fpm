@@ -48,6 +48,18 @@ RUN apk add --no-cache --upgrade \
     && rm -rf /var/www/* \
     && rm -rf /tmp/*
 
+ARG VCS_REF
+ARG VERSION
+LABEL org.opencontainers.image.revision=$VCS_REF
+LABEL org.opencontainers.image.version=$VERSION
+LABEL org.opencontainers.image.title=php73-fpm
+LABEL org.opencontainers.image.description="A PHP 7.3 based base image for development and production"
+LABEL org.opencontainers.image.url=https://github.com/Ilyes512/docker-php73-fpm
+LABEL org.opencontainers.image.documentation=https://github.com/Ilyes512/docker-php73-fpm/blob/master/README.md
+LABEL org.opencontainers.image.vendor="ilyes512"
+LABEL org.opencontainers.image.licenses=MIT
+LABEL org.opencontainers.image.source=https://github.com/Ilyes512/docker-php73-fpm
+
 FROM runtime as builder
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
@@ -72,3 +84,15 @@ RUN curl -fsSL https://getcomposer.org/installer | php -- --install-dir=/usr/loc
     && docker-php-ext-enable xdebug \
     && apk del .build \
     && rm -rf /tmp/*
+
+ARG VCS_REF
+ARG VERSION
+LABEL org.opencontainers.image.revision=$VCS_REF
+LABEL org.opencontainers.image.version=$VERSION
+LABEL org.opencontainers.image.title=php73-fpm
+LABEL org.opencontainers.image.description="A PHP 7.3 based base image for development and production"
+LABEL org.opencontainers.image.url=https://github.com/Ilyes512/docker-php73-fpm
+LABEL org.opencontainers.image.documentation=https://github.com/Ilyes512/docker-php73-fpm/blob/master/README.md
+LABEL org.opencontainers.image.vendor="ilyes512"
+LABEL org.opencontainers.image.licenses=MIT
+LABEL org.opencontainers.image.source=https://github.com/Ilyes512/docker-php73-fpm

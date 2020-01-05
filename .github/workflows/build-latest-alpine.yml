@@ -3,7 +3,7 @@ name: Build latest Alpine images
 on:
   push:
     branches: [master]
-    paths: ['alpine/**']
+    # paths: ["alpine/**"]
 
 env:
   OS: alpine
@@ -22,8 +22,18 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
       - name: Build containers
         run: |
-          docker build --tag $DOCKER_REPO:$OS-latest-builder --target builder ./$OS
-          docker build --tag $DOCKER_REPO:$OS-latest-runtime --target runtime ./$OS
+          docker build \
+            --build-arg VCS_REF=`git rev-parse HEAD` \
+            --build-arg VERSION=$OS-latest-builder \
+            --tag $DOCKER_REPO:$OS-latest-builder \
+            --target builder \
+            ./$OS
+          docker build \
+            --build-arg VCS_REF=`git rev-parse HEAD` \
+            --build-arg VERSION=$OS-latest-runtime \
+            --tag $DOCKER_REPO:$OS-latest-runtime \
+            --target runtime \
+            ./$OS
       - name: Tag latest
         run: |
           docker tag $DOCKER_REPO:$OS-latest-builder $DOCKER_REPO:latest-builder
@@ -32,5 +42,5 @@ jobs:
         run: |
           docker push $DOCKER_REPO:$OS-latest-builder
           docker push $DOCKER_REPO:$OS-latest-runtime
-          docker push $DOCKER_REPO:$latest-builder
+          docker push $DOCKER_REPO:latest-builder
           docker push $DOCKER_REPO:latest-runtime

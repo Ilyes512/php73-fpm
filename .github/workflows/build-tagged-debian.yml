@@ -23,8 +23,18 @@ jobs:
         run: |
           TAG=`echo $GITHUB_REF | cut -c11-`
           echo "\$TAG: $TAG"
-          docker build --tag $DOCKER_REPO:$TAG-builder --target builder ./$OS
-          docker build --tag $DOCKER_REPO:$TAG-runtime --target runtime ./$OS
+          docker build \
+            --build-arg VCS_REF=`git rev-parse HEAD` \
+            --build-arg VERSION=$TAG-builder \
+            --tag $DOCKER_REPO:$TAG-builder \
+            --target builder \
+            ./$OS
+          docker build \
+            --build-arg VCS_REF=`git rev-parse HEAD` \
+            --build-arg VERSION=$TAG-runtime \
+            --tag $DOCKER_REPO:$TAG-runtime \
+            --target runtime \
+            ./$OS
       - name: Push containers
         run: |
           TAG=`echo $GITHUB_REF | cut -c11-`
