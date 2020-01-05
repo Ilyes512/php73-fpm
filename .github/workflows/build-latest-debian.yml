@@ -3,7 +3,7 @@ name: Build latest Debian images
 on:
   push:
     branches: [master]
-    # paths: ['debian/**']
+    paths: ['debian/**']
 
 env:
   OS: debian
