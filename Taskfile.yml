@@ -25,7 +25,12 @@ tasks:
       - task: d:build
         vars:
           OS: debian
-          TARGET: '{{.TARGET | default "builder"}}'
+          TARGET: builder
+          TAG_VERSION: '{{.TAG_VERSION | default "latest"}}'
+      - task: d:build
+        vars:
+          OS: debian
+          TARGET: runtime
           TAG_VERSION: '{{.TAG_VERSION | default "latest"}}'
 
   d:build:alpine:
@@ -34,7 +39,12 @@ tasks:
       - task: d:build
         vars:
           OS: alpine
-          TARGET: '{{.TARGET | default "builder"}}'
+          TARGET: builder
+          TAG_VERSION: '{{.TAG_VERSION | default "latest"}}'
+      - task: d:build
+        vars:
+          OS: alpine
+          TARGET: runtime
           TAG_VERSION: '{{.TAG_VERSION | default "latest"}}'
 
   d:build:
