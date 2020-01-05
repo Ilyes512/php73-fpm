@@ -2,6 +2,9 @@
 
 A PHP 7.3 based Docker base image.
 
+![](https://github.com/Ilyes512/docker-php73-fpm/workflows/Build%20latest%20Alpine%20images/badge.svg)
+![](https://github.com/Ilyes512/docker-php73-fpm/workflows/Build%20latest%20Debian%20images/badge.svg)
+
 ## Pulling the images
 
 ```
