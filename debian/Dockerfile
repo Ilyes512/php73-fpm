@@ -1,4 +1,4 @@
-FROM php:7.3.13-fpm-buster as runtime
+FROM php:7.3.14-fpm-buster as runtime
 
 WORKDIR /var/www
 
