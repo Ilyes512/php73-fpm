@@ -49,6 +49,7 @@ RUN apk add --no-cache --upgrade \
         zip \
     && pecl install channel://pecl.php.net/uv-0.2.4 \
     && docker-php-ext-enable uv \
+    && mv $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini \
     && apk del .build \
     # remove all (non-hidden) files and dirs in /var/www/
     && rm -rf /var/www/* \
@@ -88,6 +89,8 @@ RUN curl -fsSL https://getcomposer.org/installer | php -- --install-dir=/usr/loc
         $PHPIZE_DEPS \
     && pecl install "xdebug-$XDEBUG_VERSION" \
     && docker-php-ext-enable xdebug \
+    && mv $PHP_INI_DIR/php.ini $PHP_INI_DIR/php.ini-production \
+    && mv $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini \
     && apk del .build \
     && rm -rf /tmp/*
 

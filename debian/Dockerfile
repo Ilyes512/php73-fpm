@@ -59,6 +59,7 @@ RUN apt-get update \
         libpng-dev \
         libzip-dev \
         libuv1-dev \
+    && mv $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini \
     # remove all (non-hidden) files and dirs in /var/www/
     && rm -rf /var/www/* \
     && rm -rf /var/lib/apt/lists/* \
@@ -101,6 +102,8 @@ RUN curl -fsSL https://getcomposer.org/installer | php -- --install-dir=/usr/loc
     && docker-php-ext-enable xdebug \
     && apt-get purge --assume-yes $PHPIZE_DEPS \
     && rm -rf /var/lib/apt/lists/* \
+    && mv $PHP_INI_DIR/php.ini $PHP_INI_DIR/php.ini-production \
+    && mv $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini \
     && rm -rf /tmp/*
 
 ARG VCS_REF
