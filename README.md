@@ -2,8 +2,8 @@
 
 A PHP 7.3 based Docker base image.
 
-![](https://github.com/Ilyes512/docker-php73-fpm/workflows/Build%20latest%20Alpine%20images/badge.svg)
-![](https://github.com/Ilyes512/docker-php73-fpm/workflows/Build%20latest%20Debian%20images/badge.svg)
+[![Status Latest Alpine-based](https://github.com/Ilyes512/docker-php73-fpm/workflows/Build%20latest%20Alpine%20images/badge.svg)](https://github.com/Ilyes512/docker-php73-fpm/actions?query=workflow%3A%22Build+latest+Alpine+images%22)
+[![Status Latest Debian-based](https://github.com/Ilyes512/docker-php73-fpm/workflows/Build%20latest%20Debian%20images/badge.svg)](https://github.com/Ilyes512/docker-php73-fpm/actions?query=workflow%3A%22Build+latest+Debian+images%22
 
 ## Pulling the images
 
