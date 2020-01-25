@@ -3,6 +3,10 @@
     "docker": {
         "major": {
             "enabled": false
-        }
+        },
+        "minor": {
+            "enabled": false
+        },
+        "separateMinorPatch": true
     }
 }
