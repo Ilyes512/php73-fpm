@@ -18,6 +18,8 @@ RUN apk add --no-cache --upgrade \
         libpng \
         # dependency of php zip-extension
         libzip \
+        # dependency of php uv-extension
+        libuv \
     # install needed php extension configuration/installing packages
     && apk add --no-cache --upgrade --virtual .build \
         $PHPIZE_DEPS \
@@ -29,6 +31,8 @@ RUN apk add --no-cache --upgrade \
         libpng-dev \
         # dependency of php zip-extension
         libzip-dev \
+        # dependency of php uv-extension
+        libuv-dev \
     # configure php gd-extension
     && docker-php-ext-configure gd \
         --with-jpeg-dir=/usr/include/ \
@@ -43,6 +47,8 @@ RUN apk add --no-cache --upgrade \
         gd \
         bcmath \
         zip \
+    && pecl install channel://pecl.php.net/uv-0.2.4 \
+    && docker-php-ext-enable uv \
     && apk del .build \
     # remove all (non-hidden) files and dirs in /var/www/
     && rm -rf /var/www/* \
