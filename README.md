@@ -1,3 +1,7 @@
+# ARCHIVED:
+
+See https://github.com/Ilyes512/docker-php74-fpm for the latest version.
+
 # docker-php73-fpm
 
 A PHP 7.3 based Docker base image.
