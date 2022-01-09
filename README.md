@@ -1,31 +1,22 @@
-# ARCHIVED:
+# php73-fpm
 
-See https://github.com/Ilyes512/docker-php74-fpm for the latest version.
+A PHP 7.3 (FPM) based Docker base image.
 
-# docker-php73-fpm
-
-A PHP 7.3 based Docker base image.
-
-[![Status Latest Alpine-based](https://github.com/Ilyes512/docker-php73-fpm/workflows/Build%20latest%20Alpine%20images/badge.svg)](https://github.com/Ilyes512/docker-php73-fpm/actions?query=workflow%3A%22Build+latest+Alpine+images%22)
-[![Status Latest Debian-based](https://github.com/Ilyes512/docker-php73-fpm/workflows/Build%20latest%20Debian%20images/badge.svg)](https://github.com/Ilyes512/docker-php73-fpm/actions?query=workflow%3A%22Build+latest+Debian+images%22)
+[![Build Images](https://github.com/Ilyes512/php73-fpm/workflows/Build%20Images/badge.svg)](https://github.com/Ilyes512/php73-fpm/actions?query=workflow%3A%22Build+Images%22)
 
 ## Pulling the images
 
 ```
-# Alpine based
-docker pull ilyes512/php73-fpm:alpine-latest-builder
-docker pull ilyes512/php73-fpm:alpine-latest-runtime
-
-# Debian based
-docker pull ilyes512/php73-fpm:debian-latest-runtime
-docker pull ilyes512/php73-fpm:debian-latest-runtime
+docker pull ghrc.io/ilyes512/php73-fpm:runtime-latest
+docker pull ghrc.io/ilyes512/php73-fpm:builder-latest
+docker pull ghrc.io/ilyes512/php73-fpm:builder-nodejs-latest
+docker pull ghrc.io/ilyes512/php73-fpm:vscode-latest
 ```
 
-The tag scheme: `{OS}-{VERSION}-{TARGET}`
+The tag scheme: `{TARGET}-{VERSION}`
 
-- **{OS}**: `alpine` or `debian`
+- **{TARGET}**: `runtime`, `builder`, `builder_nodejs` or `vscode`
 - **{VERSION}**: `latest` or tag i.e. `1.0.0`
-- **{TARGET}**: `runtime` or `builder`
 
 ## Building the docker image(s)
 
@@ -33,21 +24,33 @@ There are 2 targets at the moment:
 
   - **runtime**: this is for *production*. It does not contain any development tools like Composer and Xdebug.
   - **builder**: this is for *development*. This is based on the runtime-target and it adds Composer, Xdebug etc.
+  - **builder_nodejs**: this is for *development*. This is based on the builder-target and it adds NodeJS.
+  - **vscode**: this is for *development* using
+  [VS Code Remote](https://code.visualstudio.com/docs/remote/remote-overview). This is based on the
+  `builder_nodejs`-target and adds some VS Code deps.
 
-Building runtime-target:
-
-```
-docker build --tag ilyes512/php73-fpm:alpine-latest-runtime --target runtime alpine
-
-docker build --tag ilyes512/php73-fpm:debian-latest-runtime --target runtime debian
-```
-
-Building builder-target:
+Building `runtime`-target:
 
 ```
-docker build --tag ilyes512/php73-fpm:alpine-latest-builder --target builder alpine
+docker build --tag ghrc.io/ilyes512/php73-fpm:runtime-latest --target runtime .
+```
 
-docker build --tag ilyes512/php73-fpm:debian-latest-builder --target builder debian
+Building `builder`-target:
+
+```
+docker build --tag ghrc.io/ilyes512/php73-fpm:builder-latest --target builder .
+```
+
+Building `builder_nodejs`-target:
+
+```
+docker build --tag ghrc.io/ilyes512/php73-fpm:builder-nodejs-latest --target builder_nodejs .
+```
+
+Building `vscode`-target:
+
+```
+docker build --tag ghrc.io/ilyes512/php73-fpm:vscode-latest --target vscode .
 ```
 
 ## Task commands
@@ -55,9 +58,25 @@ docker build --tag ilyes512/php73-fpm:debian-latest-builder --target builder deb
 Available [Task](https://taskfile.dev/#/) commands:
 
 ```
-task: Available tasks for this project:
-
-* d:build:alpine:       Build a PHP Alpine-based Docker image
-* d:build:debian:       Build a PHP Debian-based Docker image
-* d:lint:               Apply a Dockerfile linter (https://github.com/hadolint/hadolint)
+* act:master:   Run Act with push event on master branch
+* act:pr:       Run Act with pull_request event
+* act:tag:      Run Act with tag (push) event
+* build:        Build all PHP Docker image targets
+* lint:         Apply a Dockerfile linter (https://github.com/hadolint/hadolint)
+* shell:        Interactive shell
 ```
+
+### Act tasks
+
+[Act](https://github.com/nektos/act) is a tool to run Github Actions locally. Before you can run Act and the
+`act:*`-tasks you need to add an `GITHUB_TOKEN`-secret. You can do this by adding the following
+Act config file to you users `$HOME`-directory:
+
+File path: `~/.actrc`
+```
+-s GITHUB_TOKEN=<your_github_token>
+```
+
+Replace `<your_github_token>` with a Github personal acces token. You can generate a new token
+[here](https://github.com/settings/tokens/new?description=Act) (no scopes
+are needed!).

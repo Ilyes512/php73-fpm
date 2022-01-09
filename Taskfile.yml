@@ -1,84 +1,72 @@
-version: "2"
+version: "3"
 
-silent: false
+silent: true
 
-########################################################################################################################
-#
-# TOC
-#
-########################################################################################################################
-#
-# 1. BUILD
-#
-########################################################################################################################
+vars:
+  DOCKER_REPO: ghrc.io
+  DOCKER_OWNER: ilyes512
+  DOCKER_IMAGE_NAME: php73-fpm
+  HADOLINT_TAG_VERSION: v2.8.0
+
+includes:
+  act:
+    taskfile: ./act/Taskfile.yml
+    dir: ./act
 
 tasks:
-  ######################################################################################################################
-  #
-  #  1. BUILD
-  #
-  ######################################################################################################################
 
-  d:build:debian:
-    desc: Build a PHP Debian-based Docker image
+  build:
+    desc: Build all PHP Docker image targets
     cmds:
-      - task: d:build
+      - task: build:target
         vars:
-          OS: debian
-          TARGET: builder
-          TAG_VERSION: '{{.TAG_VERSION | default "latest"}}'
-      - task: d:build
-        vars:
-          OS: debian
           TARGET: runtime
-          TAG_VERSION: '{{.TAG_VERSION | default "latest"}}'
-
-  d:build:alpine:
-    desc: Build a PHP Alpine-based Docker image
-    cmds:
-      - task: d:build
+      - task: build:target
         vars:
-          OS: alpine
           TARGET: builder
-          TAG_VERSION: '{{.TAG_VERSION | default "latest"}}'
-      - task: d:build
+      - task: build:target
         vars:
-          OS: alpine
-          TARGET: runtime
-          TAG_VERSION: '{{.TAG_VERSION | default "latest"}}'
+          TARGET: builder_nodejs
+      - task: build:target
+        vars:
+          TARGET: vscode
 
-  d:build:
+  build:target:
     deps:
-      - task: d:lint
-        vars:
-          OS: '{{.OS}}'
+      - task: lint
     preconditions:
-      - sh: test '{{.OS}}' != '<no value>'
-        msg: OS needs to contain the Docker OS [alpine, debian]
-      - sh: test '{{.TARGET}}' != '<no value>'
-        msg: TARGET needs to contain the Docker TARGET [runtime, builder]
-      - sh: test '{{.TAG_VERSION}}' != '<no value>'
-        msg: TAG_VERSION needs to contain the tag that will be assigned to the Docker build
+      - sh: >
+          test '{{.TARGET}}' = 'runtime'
+          -o '{{.TARGET}}' = 'builder'
+          -o '{{.TARGET}}' = 'builder_nodejs'
+          -o '{{.TARGET}}' = 'vscode'
+        msg: TARGET needs to contain the Docker TARGET [runtime, builder, builder_nodejs, vscode]
+    vars:
+      VERSION: '{{.VERSION | default "latest"}}'
     cmds:
       - docker build
-        --build-arg VCS_REF={{.OS}}-{{.TAG_VERSION}}-{{.TARGET}}
-        --build-arg VERSION=`git rev-parse HEAD`
         --target {{.TARGET}}
-        --tag {{.TAG_REPOSITORY}}/{{.TAG_NAME}}:{{.OS}}-{{.TAG_VERSION}}-{{.TARGET}}
-        ./{{.OS}}
+        --tag {{.DOCKER_REPO}}/{{.DOCKER_OWNER}}/{{.DOCKER_IMAGE_NAME}}:{{.TARGET}}-{{.VERSION}}
+        .
 
-  d:lint:
+  lint:
     desc: Apply a Dockerfile linter (https://github.com/hadolint/hadolint)
-    preconditions:
-      - sh: test '{{.OS}}' != '<no value>'
-        msg: OS needs to contain the Docker OS [alpine, debian]
     cmds:
       - docker run
         --interactive
         --rm
+        --volume $(pwd)/.hadolint.yml:/.hadolint.yml
         hadolint/hadolint:{{.HADOLINT_TAG_VERSION}}
         hadolint
-        --ignore DL3018
-        --ignore DL3008
         -
-        < ./{{.OS}}/Dockerfile
+        < Dockerfile
+
+  shell:
+    desc: Interactive shell
+    interactive: true
+    cmds:
+      - docker run
+        --interactive
+        --tty
+        --rm
+        {{.DOCKER_REPO}}/{{.DOCKER_OWNER}}/{{.DOCKER_IMAGE_NAME}}:builder_nodejs-{{.VERSION | default "latest" }}
