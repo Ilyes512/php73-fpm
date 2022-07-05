@@ -4,7 +4,7 @@ FROM php:7.3.33-fpm-bullseye AS runtime
 ARG UNIQUE_ID_FOR_CACHEFROM=runtime
 
 # Latest version of event-extension: https://pecl.php.net/package/event
-ARG PHP_EVENT_VERSION=3.0.6
+ARG PHP_EVENT_VERSION=3.0.8
 
 ENV SMTPHOST mail
 ENV SMTPEHLO localhost
@@ -89,11 +89,11 @@ FROM runtime AS builder
 ARG UNIQUE_ID_FOR_CACHEFROM=builder
 
 # Latest version of Phive: https://api.github.com/repos/phar-io/phive/releases/latest
-ARG PHIVE_VERSION=0.15.0
+ARG PHIVE_VERSION=0.15.1
 # Latest version of Composer: https://getcomposer.org/download
-ARG COMPOSER_VERSION=2.2.6
-# Latest version of Xdebug: https://pecl.php.net/package/xdebug
-ARG XDEBUG_VERSION=3.1.3
+ARG COMPOSER_VERSION=2.3.9
+# Latest version of Xdebug: https://github.com/xdebug/xdebug/tags or https://pecl.php.net/package/xdebug
+ARG XDEBUG_VERSION=3.1.5
 
 RUN apt-get update \
     && apt-get install --assume-yes --no-install-recommends \
@@ -120,8 +120,7 @@ RUN apt-get update \
     && docker-php-ext-enable xdebug \
     && cp "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini" \
     # Cleanup
-    && apt-get purge --assume-yes \
-        $PHPIZE_DEPS \
+    && apt-get purge --assume-yes $PHPIZE_DEPS \
     && apt-get autoremove --assume-yes \
     && apt-get clean --assume-yes \
     && rm -rf /var/lib/apt/lists/* \
